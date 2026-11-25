@@ -1,5 +1,6 @@
 import re
 import json
+from constitution_rag.utils.utils import read_jsonl_records, write_jsonl_records
 
 ARTICLE_PATTERN = re.compile(
     r"مادة\s*\(([0-9٠-٩]+)(?:\s+(مكرر(?:اً)?))?\)"
@@ -9,15 +10,6 @@ DIGITS = str.maketrans(
     '٠١٢٣٤٥٦٧٨٩',
     '0123456789'
 )
-
-doc_1 = "data/interim/constitution_2014_original.jsonl"
-doc_2 = "data/interim/constitution_2014_amended_2019.jsonl"
-
-with open(doc_1, mode="r", encoding="utf-8") as f:
-    pages_1 = [json.loads(line) for line in f]
-
-with open(doc_2, mode="r", encoding="utf-8") as f:
-    pages_2 = [json.loads(line) for line in f]
 
 def split_articles(pages: list[dict]):
     articles = []
@@ -82,13 +74,11 @@ def split_articles(pages: list[dict]):
 
     return articles
 
+pages_1 = read_jsonl_records("data/interim/constitution_2014_original.jsonl")
+pages_2 = read_jsonl_records("data/interim/constitution_2014_amended_2019.jsonl")
+
 results_1 = split_articles(pages_1)
 results_2 = split_articles(pages_2)
 
-with open("data/processed/constitution_2014_original_articles.jsonl", mode="w", encoding="utf-8") as f:
-    for article in results_1:
-        f.write(json.dumps(article, ensure_ascii=False) + "\n")
-
-with open("data/processed/constitution_2014_amended_2019_articles.jsonl", mode="w", encoding="utf-8") as f:
-    for article in results_2:
-        f.write(json.dumps(article, ensure_ascii=False) + "\n")
+write_jsonl_records(results_1, "data/interim/constitution_2014_original_articles.jsonl")
+write_jsonl_records(results_2, "data/interim/constitution_2014_amended_2019_articles.jsonl")
