@@ -1,4 +1,3 @@
-import json
 import difflib
 from constitution_rag.utils.utils import read_jsonl_records, write_jsonl_records
 from constitution_rag.ingest.normalize import normalize_arabic
